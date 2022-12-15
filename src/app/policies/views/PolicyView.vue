@@ -61,7 +61,7 @@
           </KSelect>
 
           <DocumentationLink
-            :href="docsURL"
+            :href="`${env('KUMA_DOCS_URL')}/policies/${policy.path}/?${env('KUMA_UTM_QUERY_PARAMS')}`"
             data-testid="policy-documentation-link"
           />
 
@@ -163,6 +163,9 @@ import YamlView from '@/app/common/YamlView.vue'
 import { PolicyEntity, TableHeader } from '@/types/index.d'
 import { patchQueryParam } from '@/utilities/patchQueryParam'
 
+import { useEnv } from '@/utilities/useEnv'
+const env = useEnv()
+
 const tabs = [
   {
     hash: '#overview',
@@ -222,11 +225,6 @@ const policies = computed(() => {
       selected: item.path === route.name,
     }
   })
-})
-const docsURL = computed(() => {
-  const kumaDocsVersion = store.getters['config/getKumaDocsVersion']
-
-  return `https://kuma.io/docs/${kumaDocsVersion}/policies/${policy.value.path}/`
 })
 
 watch(() => route.params.mesh, function () {
