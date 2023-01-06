@@ -1,8 +1,8 @@
-import container from '@/services/container'
-import type { EnvVars } from '@/services/env'
+import container, { TOKENS } from '@/services/container'
+import { EnvVars } from '@/services/env'
 
 export const useEnv = () => {
   return (key: keyof EnvVars) => {
-    return container.get('env').var(key)
+    return container.get(TOKENS.Env).var(key)
   }
 }

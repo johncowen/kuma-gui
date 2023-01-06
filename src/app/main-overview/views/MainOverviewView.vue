@@ -1,5 +1,6 @@
 <template>
   <div class="chart-container mt-16">
+    <ProgressBar class="mt-16" />
     <DonutChart
       v-if="isMultizoneMode"
       class="chart chart-1/2 chart-offset-left-1/6"
@@ -66,6 +67,9 @@ import DonutChart from '@/app/common/charts/DonutChart.vue'
 import VersionsDonutChart from '@/app/common/charts/VersionsDonutChart.vue'
 import MeshResources from '@/app/common/MeshResources.vue'
 import { useStore } from '@/store/store'
+
+import container, { TOKENS } from '@/services/container'
+const ProgressBar = container.get(TOKENS.ProgressBar)
 
 const store = useStore()
 

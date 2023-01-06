@@ -50,6 +50,9 @@ export default defineConfig(function ({ mode }) {
          * Used to import files using, for example, '@/api/kumaApi'.
          */
         '@': path.resolve('./src'),
+        ...(process.env.KUMA_CONTAINER && {
+          '/src/services/container.ts': process.env.KUMA_CONTAINER,
+        }),
       },
     },
   }
