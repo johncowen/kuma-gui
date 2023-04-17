@@ -1,14 +1,13 @@
-import { setupWorker, RestHandler, MockedRequest, rest } from 'msw'
+import { setupWorker, MockedRequest, rest } from 'msw'
 
 import { TOKENS as PROD_TOKENS, services as prodServices } from './production'
 import { merge, build, ServiceDefinition, token, get } from './utils'
 import { useBootstrap } from '../index'
-import type { TokenType } from '@/services/utils'
-import type { FS } from '@/test-support'
-
 import CookiedEnv from '@/services/env/CookiedEnv'
 import Logger from '@/services/logger/DatadogLogger'
 import { disabledLogger } from '@/services/logger/DisabledLogger'
+import type { TokenType } from '@/services/utils'
+import type { FS } from '@/test-support'
 import { fakeApi } from '@/test-support'
 import { fs } from '@/test-support/mocks/fs'
 
@@ -23,11 +22,6 @@ type Msw = {
 const $ = {
   ...PROD_TOKENS,
   msw: token<Msw>('msw'),
-  /**
-   * @description
-   * Service Label for labeling MSW handlers for consumption via setupWorker
-   */
-  mswHandlers: token<RestHandler[]>('msw.handlers'),
 
   /**
    * @description
@@ -35,7 +29,6 @@ const $ = {
    */
   fakeFS: token<FS>('fake.fs'),
 
-  mswFakeApiHandlers: token<RestHandler[]>('msw.fake.handlers'),
   kumaFS: token<FS>('fake.fs.kuma'),
 }
 
@@ -57,8 +50,9 @@ export const services: ServiceDefinition[] = [
 
   // Mock Service Worker
   [$.msw, {
-    service: (handlers: RestHandler[]) => {
-      const worker = setupWorker(...handlers)
+    service: (env: TokenType<typeof $.env>, fs: FS) => {
+      const mock = fakeApi(env, fs)
+      const worker = setupWorker(...mock('*'))
 
       console.warn(
         '%c ✨You are mocking api requests.',
@@ -84,17 +78,8 @@ export const services: ServiceDefinition[] = [
       return rest
     },
     arguments: [
-      $.mswHandlers,
-    ],
-  }],
-  [$.mswFakeApiHandlers, {
-    service: (env: TokenType<typeof $.env>, fs: FS) => fakeApi(env, rest, fs),
-    arguments: [
       $.env,
       $.fakeFS,
-    ],
-    labels: [
-      $.mswHandlers,
     ],
   }],
 

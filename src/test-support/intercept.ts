@@ -20,7 +20,14 @@ class Router<T> {
       const _url = `data:${path}`
       if (pattern.test(_url)) {
         const args = pattern.exec(_url)
-        return { route, params: args?.pathname.groups }
+        const params = args?.pathname.groups || {}
+        return {
+          route,
+          params: Object.entries(params).reduce((prev: Record<string, string>, [key, value]) => {
+            prev[key] = value || ''
+            return prev
+          }, {}),
+        }
       }
     }
     throw new Error(`Matching route for '${path}' not found`)
@@ -56,9 +63,7 @@ export const mocker = (env: (key: AppEnvKeys) => string, cy: Server, fs: FS): Mo
               searchParams: new URLSearchParams(url.search),
             },
           }
-          // @ts-ignore
           const response = fetch(request)
-          // @ts-ignore
           req.reply(cb(createMerge(response), request, response).body)
         } catch (e) {
           Cypress.log({ displayName: 'ERROR', message: (e as Error).message })
