@@ -51,6 +51,7 @@
     "@bahmutov/cypress-esbuild-preprocessor": "^2.2.0",
     "@faker-js/faker": "^7.6.0",
     "@jest/globals": "^29.5.0",
+    "@modyfi/vite-plugin-yaml": "^1.0.4",
     "@types/js-yaml": "^4.0.5",
     "@types/prismjs": "^1.26.0",
     "@types/semver": "^7.5.0",

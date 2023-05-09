@@ -1,3 +1,4 @@
+import yaml from '@modyfi/vite-plugin-yaml'
 import vue from '@vitejs/plugin-vue'
 import dotenv from 'dotenv'
 import { fileURLToPath, URL } from 'url'
@@ -34,6 +35,7 @@ export const config: UserConfigFn = ({ mode }) => {
         },
       }),
       svgLoader(),
+      yaml(),
       createHtmlPlugin({
         inject: {
           data: {

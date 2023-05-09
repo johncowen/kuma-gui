@@ -4,9 +4,11 @@ import { createStore, StoreOptions, Store } from 'vuex'
 
 import { useApp, useBootstrap } from '../index'
 import { getNavItems } from '@/app/getNavItems'
+import i18nEnUs from '@/locales/en-us'
 import { createRouter } from '@/router/router'
 import routes from '@/router/routes'
 import Env, { EnvArgs, EnvVars } from '@/services/env/Env'
+import I18n from '@/services/i18n/I18n'
 import KumaApi from '@/services/kuma-api/KumaApi'
 import Logger from '@/services/logger/DatadogLogger'
 import { token, get } from '@/services/utils'
@@ -20,6 +22,10 @@ const $ = {
   EnvVars: token<EnvVars>('EnvVars'),
   Env: token<Env>('Env'),
   env: token<Alias<Env['var']>>('env'),
+
+  i18n: token<ReturnType<typeof I18n>>('i18n'),
+  enUs: token('i18n.locale.enUs'),
+  kumaEnUs: token('kuma.locale.enUs'),
 
   api: token<KumaApi>('KumaApi'),
 
@@ -57,6 +63,20 @@ export const services: ServiceConfigurator<SupportedTokens> = ($) => [
   }],
   [$.env, {
     service: (): Alias<Env['var']> => (...rest) => get($.Env).var(...rest),
+  }],
+
+  [$.i18n, {
+    service: I18n,
+    arguments: [
+      $.enUs,
+    ],
+  }],
+
+  [$.kumaEnUs, {
+    constant: i18nEnUs,
+    labels: [
+      $.enUs,
+    ],
   }],
 
   // KumaAPI
