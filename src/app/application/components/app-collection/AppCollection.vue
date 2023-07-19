@@ -5,7 +5,7 @@
     :pagination-total-items="props.total"
     :initial-fetcher-params="{ page: props.pageNumber, pageSize: props.pageSize }"
     :fetcher-cache-key="String(cacheKey)"
-    :fetcher="({page, pageSize, query}: FetcherProps) => {
+    :fetcher="({page, pageSize, query}: FetcherParams) => {
       emit('change', {
         page: page,
         size: pageSize,
@@ -13,36 +13,33 @@
       })
       return {data: items}
     }"
-    :cell-attrs="({ headerKey }: any) => {
-      return {
-        class: {
-          [`${headerKey}-column`]: true,
-        },
-      }
-    }"
+    :cell-attrs="({ headerKey }: CellAttrParams) => ({
+      class: `${headerKey}-column`
+    })"
     empty-state-icon-size="96"
     disable-sorting
     hide-pagination-when-optional
     @row:click="click"
   >
     <template
-      v-if="slots.toolbar"
-      #toolbar
-    >
-      <div class="app-collection-toolbar">
-        <slot name="toolbar" />
-      </div>
-    </template>
-
-    <template
-      v-for="key in Object.keys(remainingSlots)"
+      v-for="key in Object.keys(slots)"
+      :key="key"
       #[`${key}`]="{ row, rowValue }"
     >
-      <slot
-        :name="key"
-        :row="row"
-        :row-value="rowValue"
-      />
+      <template
+        v-if="key === 'toolbar'"
+      >
+        <div class="app-collection-toolbar">
+          <slot name="toolbar" />
+        </div>
+      </template>
+      <template v-else>
+        <slot
+          :name="key"
+          :row="row"
+          :row-value="rowValue"
+        />
+      </template>
     </template>
   </KTable>
 </template>
@@ -51,9 +48,15 @@
 import {
   KTable,
 } from '@kong/kongponents'
-import { computed, useSlots, ref, watch } from 'vue'
+import { useSlots, ref, watch } from 'vue'
 
-type FetcherProps = {
+type CellAttrParams = {
+  headerKey: string
+  row: any
+  rowIndex: number
+  colIndex: number
+}
+type FetcherParams = {
   page: number,
   pageSize: number,
   query: string
@@ -82,16 +85,9 @@ const slots = useSlots()
 
 const items = ref<unknown[] | undefined>(props.items)
 const cacheKey = ref<number>(0)
-
-const remainingSlots = computed(() => {
-  const { toolbar, ...remainingSlots } = slots
-
-  return remainingSlots
-})
-
 watch(() => props.items, () => {
-  cacheKey.value++
   items.value = props.items
+  cacheKey.value++
 })
 const click = (e: MouseEvent) => {
   const $tr = (e.target as HTMLElement).closest('tr')
@@ -104,7 +100,7 @@ const click = (e: MouseEvent) => {
 }
 </script>
 <style type="scss" scoped>
-.app-collection :is(td) > :is(a) {
+.app-collection :deep(td:first-of-type > a) {
   color: inherit;
   font-weight: var(--font-weight-semi-bold);
   text-decoration: none;
