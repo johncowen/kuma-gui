@@ -9,7 +9,7 @@
       aria-live="assertive"
       aria-atomic="true"
     >
-      {{ t('components.route-view.route-announcer', {title: title}) }}
+      {{ t('components.route-view.route-announcer', { title }) }}
     </div>
     <slot
       name="default"
