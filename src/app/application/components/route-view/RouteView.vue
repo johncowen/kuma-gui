@@ -154,7 +154,7 @@ watch(() => props.name, (name) => {
 
   if (Object.keys(params).length > 0) {
     router.replace({
-      name,
+      name: route.name,
       query: cleanQuery(params, route.query),
     })
   }

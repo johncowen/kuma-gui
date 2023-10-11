@@ -26,6 +26,7 @@
     :cell-attrs="({ headerKey }: CellAttrParams) => ({
       class: `${headerKey}-column`
     })"
+    :row-attrs="props.rowAttrs"
     disable-sorting
     hide-pagination-when-optional
     @row:click="click"
@@ -134,6 +135,7 @@ const props = withDefaults(defineProps<{
   emptyStateMessage?: string
   emptyStateCtaTo?: string | RouteLocationRaw
   emptyStateCtaText?: string
+  rowAttrs: (params: any) => { class?: string }
 }>(), {
   total: 0,
   pageNumber: 1,
@@ -143,6 +145,7 @@ const props = withDefaults(defineProps<{
   emptyStateMessage: undefined,
   emptyStateCtaTo: undefined,
   emptyStateCtaText: undefined,
+  rowAttrs: () => () => ({}),
 })
 
 const emit = defineEmits<{
@@ -237,5 +240,8 @@ const click = (e: MouseEvent) => {
   width: var(--special-column-width, initial);
   min-width: 80px;
   text-align: end;
+}
+.app-collection tr.is-selected {
+  background-color: var(--grey-100);
 }
 </style>

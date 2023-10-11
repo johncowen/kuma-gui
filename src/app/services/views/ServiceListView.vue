@@ -10,7 +10,8 @@
       :params="{
         page: 1,
         size: me.pageSize,
-        mesh: ''
+        mesh: '',
+        service: ''
       }"
     >
       <DataSource
@@ -46,6 +47,14 @@
                   { label: 'Status', key: 'status' },
                   { label: 'Actions', key: 'actions', hideLabel: true },
                 ]"
+                :row-attrs="(params) => {
+                  if(route.params.service === params.name) {
+                    return {
+                      class: 'is-selected'
+                    }
+                  }
+                  return {}
+                }"
                 :page-number="parseInt(route.params.page)"
                 :page-size="parseInt(route.params.size)"
                 :total="data?.total"
@@ -56,10 +65,14 @@
                 <template #name="{ row: item }">
                   <RouterLink
                     :to="{
-                      name: 'service-detail-view',
+                      name: 'service-summary-view',
                       params: {
                         service: item.name,
                       },
+                      query: {
+                        page: route.params.page,
+                        size: route.params.size
+                      }
                     }"
                   >
                     {{ item.name }}
@@ -129,6 +142,23 @@
                   </KDropdownMenu>
                 </template>
               </AppCollection>
+              <RouterView v-slot="child">
+                <KSlideout
+                  v-if="child.Component"
+                  :is-visible="true"
+                  :has-overlay="false"
+                  @close="() => {
+                    route.replace({
+                      name: 'service-list-view'
+                    })
+                  }"
+                >
+                  <component
+                    :is="child.Component"
+                    :data="data"
+                  />
+                </KSlideout>
+              </RouterView>
             </template>
           </KCard>
         </AppView>
