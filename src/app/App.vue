@@ -109,8 +109,4 @@ const isWizard = computed(() => route.meta.isWizard === true)
   display: var(--AppDisplay);
   grid-template-columns: var(--AppSidebarWidth) 1fr;
 }
-
-.app-main-content {
-  padding: var(--AppContentPadding);
-}
 </style>
