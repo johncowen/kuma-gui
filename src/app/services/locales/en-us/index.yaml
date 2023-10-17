@@ -11,3 +11,5 @@ services:
       title: Services
   detail:
     no_matching_external_service: 'No matching ExternalService was found for service {name}'
+  overview: 'Overview'
+  config: 'YAML'
