@@ -22,6 +22,13 @@
           <template #title>
             <h2>
               <RouteTitle
+                v-if="route.params.service"
+                :title="t('services.routes.items.tray_title', { name: route.params.service })"
+                :render="true"
+              />
+
+              <RouteTitle
+                v-else
                 :title="t('services.routes.items.title')"
                 :render="true"
               />
@@ -151,9 +158,15 @@
               v-slot="child"
             >
               <TrayView
-                @close="route.update({
-                  page: route.params.page,
-                  size: route.params.size,
+                @close="route.replace({
+                  name: 'service-list-view',
+                  params: {
+                    mesh: route.params.mesh,
+                  },
+                  query: {
+                    page: route.params.page,
+                    size: route.params.size,
+                  },
                 })"
               >
                 <template #icon>
