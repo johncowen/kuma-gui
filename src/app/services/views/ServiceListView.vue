@@ -22,13 +22,6 @@
           <template #title>
             <h2>
               <RouteTitle
-                v-if="route.params.service"
-                :title="t('services.routes.items.tray_title', { name: route.params.service })"
-                :render="true"
-              />
-
-              <RouteTitle
-                v-else
                 :title="t('services.routes.items.title')"
                 :render="true"
               />
@@ -66,7 +59,7 @@
                 <template #name="{ row: item }">
                   <RouterLink
                     :to="{
-                      name: 'service-tray-view',
+                      name: 'service-summary-view',
                       params: {
                         mesh: item.mesh,
                         service: item.name,
@@ -157,7 +150,7 @@
               v-if="selectedService"
               v-slot="child"
             >
-              <TrayView
+              <AppCollectionSummary
                 @close="route.replace({
                   name: 'service-list-view',
                   params: {
@@ -169,31 +162,11 @@
                   },
                 })"
               >
-                <template #icon>
-                  <img
-                    aria-hidden="true"
-                    src="@/assets/images/icon-wifi-tethering.svg?url"
-                  >
-                </template>
-
-                <template #title>
-                  <RouterLink
-                    :to="{
-                      name: 'service-detail-view',
-                      params: {
-                        service: selectedService.name,
-                      },
-                    }"
-                  >
-                    {{ selectedService.name }}
-                  </RouterLink>
-                </template>
-
                 <component
                   :is="child.Component"
                   :data="selectedService"
                 />
-              </TrayView>
+              </AppCollectionSummary>
             </RouterView>
           </template>
         </AppView>
@@ -208,11 +181,12 @@ import { MoreIcon } from '@kong/icons'
 
 import type { ServiceInsightCollectionSource } from '../sources'
 import AppCollection from '@/app/application/components/app-collection/AppCollection.vue'
+import AppCollectionSummary from '@/app/application/components/app-collection/AppCollectionSummary.vue'
 import ErrorBlock from '@/app/common/ErrorBlock.vue'
 import StatusBadge from '@/app/common/StatusBadge.vue'
 import TextWithCopyButton from '@/app/common/TextWithCopyButton.vue'
-import TrayView from '@/app/common/TrayView.vue'
 import type { MeSource } from '@/app/me/sources'
+
 </script>
 
 <style lang="scss" scoped>
