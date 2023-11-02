@@ -1,29 +1,30 @@
 Feature: application / ListViewNavigation
   Background:
     Given the CSS selectors
-      | Alias       | Selector                                                                  |
-      | main-nav    | .app-sidebar                                                              |
-      | breadcrumbs | .k-breadcrumbs                                                            |
-      | detail-link | [data-testid$='-collection'] tr:nth-child(1) [data-testid='details-link'] |
+      | Alias       | Selector                                           |
+      | main-nav    | .app-sidebar                                       |
+      | detail-link | tbody tr:nth-child(1) [data-testid='details-link'] |
+
     And the environment
       """
       KUMA_MODE: global
       KUMA_ZONE_NAME: bandwidth-0
       """
 
-  Scenario Outline: The <BreadcrumbTitle> list view has correct detail view link
+  Scenario Outline: The <URL> list view has correct detail view link
     When I visit the "<URL>" URL
     And I click the "$detail-link" element
 
-    Then the "$breadcrumbs" element contains "<BreadcrumbTitle>"
+    Then the URL contains "<URL>"
+    Then the URL contains "<DetailURL>"
 
     Examples:
-      | URL                          | BreadcrumbTitle     |
-      | /zones                       | Zone Control Planes |
-      | /zones/bandwidth-0/egresses  | Egresses            |
-      | /zones/bandwidth-0/ingresses | Ingresses           |
-      | /meshes                      | Meshes              |
-      | /meshes/default/gateways     | Gateways            |
-      | /meshes/default/data-planes  | Data Plane Proxies  |
-      | /meshes/default/services     | Services            |
-      | /meshes/default/policies     | Policies            |
+      | URL                          | DetailURL |
+      | /zones                       | /overview |
+      | /zones/bandwidth-0/egresses  | /overview |
+      | /zones/bandwidth-0/ingresses | /overview |
+      | /meshes                      | /overview |
+      | /meshes/default/gateways     | /overview |
+      | /meshes/default/data-planes  | /overview |
+      | /meshes/default/services     | /overview |
+      | /meshes/default/policies     | /overview |
