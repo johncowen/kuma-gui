@@ -29,8 +29,8 @@ When('I visit the {string} URL', function (path: string) {
       node.textContent = JSON.stringify(config)
     })
   })
-  // currently use this to denote "the page has initially rendered"
-  cy.get('.app-main-content').should('be.visible')
+  // html.kuma-ready means "the page has initially rendered"
+  cy.get('html.kuma-ready').should('be.visible')
 })
 When('I load the {string} URL', function (path: string) {
   cy.visit(`${path}`)
