@@ -42,7 +42,7 @@ export const createMerge = (response: MockResponse): Merge => (obj) => {
   }))
 }
 
-const useResponder = <T extends RestRequest>(fs: FS, env: AEnv) => {
+export const useResponder = <T extends RestRequest>(fs: FS, env: AEnv) => {
   return (route: string, opts: Options = {}, cb: Callback = noop) => {
     const mockEnv: Env = (key, d = '') => (opts[key as MockEnvKeys] ?? '') || env(key as AppEnvKeys, d)
     if (route !== '*') {
