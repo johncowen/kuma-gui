@@ -1849,10 +1849,10 @@
   resolved "https://registry.yarnpkg.com/@kong/icons/-/icons-1.8.14.tgz#3219563df669b8bb3e260df12ac211a5072938e6"
   integrity sha512-nJUTtLpqelKCTY8lS8VByWaHYUq1CuB5cBUX/q2FEDu5o6IKH/B7fEDQpb/pB1lLRYTqZXneHR/lGYjxy4u8eQ==
 
-"@kong/kongponents@9.0.0-alpha.105":
-  version "9.0.0-alpha.105"
-  resolved "https://registry.yarnpkg.com/@kong/kongponents/-/kongponents-9.0.0-alpha.105.tgz#446e13004e9199e1c821ad8ad356d50e6aa29217"
-  integrity sha512-ZCoA3RxtzHUAvBVcxmMvG7gF0nnlmj/pM+/ZvnVgOydfOIhgMPZ6Ou19XQa10gcGD+h90BhBJR4+TXAamkb/OQ==
+"@kong/kongponents@9.0.0-pr.2020.19de55b2.0":
+  version "9.0.0-pr.2020.19de55b2.0"
+  resolved "https://registry.yarnpkg.com/@kong/kongponents/-/kongponents-9.0.0-pr.2020.19de55b2.0.tgz#0ecd2cb8331ca29353c203a372ba4cfc83a4390d"
+  integrity sha512-w/crplJ7Ri7afsVLgZspB/xVArqzqEt48SacaGI6awYVRTi2DQbYgQiBhpnHCHaPGWQd5/2cpDQiTju23xeJpQ==
   dependencies:
     "@kong/icons" "^1.8.14"
     "@popperjs/core" "^2.11.8"
