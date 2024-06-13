@@ -1,8 +1,11 @@
+import createClient from 'openapi-fetch'
+
 import { MeshService, MeshExternalService, ExternalService, ServiceInsight } from './data'
 import type { DataSourceResponse } from '@/app/application'
 import { defineSources } from '@/app/application/services/data-source'
 import type KumaApi from '@/services/kuma-api/KumaApi'
 import type { PaginatedApiListResponse as CollectionResponse, ServiceInsightsParameters } from '@/types/api.d'
+import type { paths } from '@/types/auto-generated.d'
 
 export type { ServiceInsight } from './data'
 
@@ -13,6 +16,10 @@ export type ServiceInsightCollectionSource = DataSourceResponse<ServiceInsightCo
 export type ExternalServiceSource = DataSourceResponse<ExternalService | null>
 
 export const sources = (api: KumaApi) => {
+  const http = createClient<paths>({
+    baseUrl: '',
+    fetch: api.client.fetch,
+  })
   return defineSources({
     '/meshes/:mesh/mesh-services': async (params) => {
       const { mesh, size } = params
@@ -39,13 +46,33 @@ export const sources = (api: KumaApi) => {
       const { mesh, size } = params
       const offset = params.size * (params.page - 1)
 
-      return MeshExternalService.fromCollection(await api.getAllMeshExternalServicesFromMesh({ mesh }, { size, offset }))
+      const res = await http.GET('/meshes/{mesh}/meshexternalservices', {
+        params: {
+          path: {
+            mesh,
+          },
+          query: {
+            offset,
+            size,
+          },
+        },
+      })
+      return MeshExternalService.fromCollection(res.data!)
     },
 
     '/meshes/:mesh/mesh-external-service/:name': async (params) => {
       const { mesh, name } = params
 
-      return MeshExternalService.fromObject(await api.getMeshExternalService({ mesh, name }))
+      const res = await http.GET('/meshes/{mesh}/meshexternalservices/{name}', {
+        params: {
+          path: {
+            mesh,
+            name,
+          },
+        },
+      })
+
+      return MeshExternalService.fromObject(res.data!)
     },
 
     '/meshes/:mesh/mesh-external-service/:name/as/kubernetes': async (params) => {

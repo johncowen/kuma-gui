@@ -1,11 +1,21 @@
 import type { PaginatedApiListResponse } from '@/types/api.d'
+import type { components } from '@/types/auto-generated.d'
 import type {
   MeshService as PartialMeshService,
-  MeshExternalService as PartialMeshExternalService,
   ExternalService as PartialExternalService,
   ServiceInsight as PartialServiceInsight,
   ServiceStatus as ServiceTypeCount,
 } from '@/types/index.d'
+
+type PartialMeshExternalService = components['schemas']['MeshExternalServiceItem']
+type PartialMeshExternalServiceList = components['responses']['MeshExternalServiceList']['content']['application/json']
+type PagedCollection<T> = {
+  total: number
+  items: T[]
+  // @TODO(jc): generated types current think next is `next?: string` which is
+  // wrong but seeing as we never use `next` :shrug:
+  // next: string | null
+}
 
 export type ExternalService = PartialExternalService & {
   config: PartialExternalService
@@ -33,8 +43,8 @@ export type MeshExternalService = Omit<PartialMeshExternalService, 'status'> & {
   labels: NonNullable<PartialMeshExternalService['labels']>
   config: PartialMeshExternalService
   status: {
-    addresses: NonNullable<PartialMeshExternalService['status']['addresses']>
-    vip?: PartialMeshExternalService['status']['vip']
+    addresses: NonNullable<NonNullable<PartialMeshExternalService['status']>['addresses']>
+    vip?: NonNullable<PartialMeshExternalService['status']>['vip']
   }
 }
 
@@ -136,7 +146,7 @@ export const MeshExternalService = {
     }
   },
 
-  fromCollection(collection: PaginatedApiListResponse<PartialMeshExternalService>): PaginatedApiListResponse<MeshExternalService> {
+  fromCollection(collection: PartialMeshExternalServiceList): PagedCollection<MeshExternalService> {
     const items = Array.isArray(collection.items) ? collection.items.map(MeshExternalService.fromObject) : []
     return {
       ...collection,

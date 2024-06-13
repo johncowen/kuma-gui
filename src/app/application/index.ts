@@ -20,6 +20,7 @@ import type { ServiceDefinition } from '@/services/utils'
 import { token, createInjections, constant } from '@/services/utils'
 import type { Component } from 'vue'
 export * from './services/can'
+export { defineSources } from './services/data-source'
 
 // temporary simple "JSON data only" structuredClone polyfill for cloning JSON
 // data
@@ -55,6 +56,7 @@ const $ = {
   env: token<Env['var']>('application.env'),
   EnvVars: token<EnvVars>('EnvVars'),
 
+  fetch: token<typeof fetch>('application.fetch'),
   can: token<Can>('application.can'),
   features: token('application.can.features'),
 
@@ -110,6 +112,10 @@ export const services = (app: Record<string, Token>): ServiceDefinition[] => {
         $.enUs,
         app.env,
       ],
+    }],
+
+    [$.fetch, {
+      service: () => fetch,
     }],
 
     [$.can, {
