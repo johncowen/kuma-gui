@@ -1,42 +1,56 @@
 import type { PaginatedApiListResponse } from '@/types/api.d'
+import type { components } from '@/types/auto-generated.d'
 import type {
-  MeshService as PartialMeshService,
-  MeshExternalService as PartialMeshExternalService,
   ExternalService as PartialExternalService,
   ServiceInsight as PartialServiceInsight,
   ServiceStatus as ServiceTypeCount,
 } from '@/types/index.d'
 
+type PartialMeshExternalService = components['schemas']['MeshExternalServiceItem']
+type PartialMeshExternalServiceList = components['responses']['MeshExternalServiceList']['content']['application/json']
+type PartialMeshService = components['schemas']['MeshServiceItem']
+type PartialMeshServiceList = components['responses']['MeshServiceList']['content']['application/json']
+
+type PagedCollection<T> = {
+  total: number
+  items: T[]
+  // @TODO(jc): generated types current think next is `next?: string` which is
+  // wrong but seeing as we never use `next` :shrug:
+  // next: string | null
+}
+
 export type ExternalService = PartialExternalService & {
   config: PartialExternalService
 }
-export type MeshService = Omit<PartialMeshService, 'spec' | 'status'> & {
+export type MeshService = {
   id: string
   namespace: string
+  config: PartialMeshService
+
   labels: NonNullable<PartialMeshService['labels']>
   spec: {
     ports: NonNullable<PartialMeshService['spec']['ports']>
     selector: {
       dataplaneTags: NonNullable<NonNullable<PartialMeshService['spec']['selector']>['dataplaneTags']>
-    }
-  }
+    } & Omit<PartialMeshService['spec']['selector'], 'dataplaneTags'>
+  } & Omit<PartialMeshService['spec'], 'ports' | 'selector'>
   status: {
-    addresses: NonNullable<PartialMeshService['status']['addresses']>
-    vips: NonNullable<PartialMeshService['status']['vips']>
-    tls: NonNullable<PartialMeshService['status']['tls']>
-  }
-  config: PartialMeshService
-}
-export type MeshExternalService = Omit<PartialMeshExternalService, 'status'> & {
+    addresses: NonNullable<NonNullable<PartialMeshService['status']>['addresses']>
+    vips: NonNullable<NonNullable<PartialMeshService['status']>['vips']>
+    tls: NonNullable<NonNullable<PartialMeshService['status']>['tls']>
+  } & Omit<PartialMeshService['status'], 'addresses' | 'vips' | 'tls'>
+} & Omit<PartialMeshService, 'spec' | 'status'>
+
+export type MeshExternalService = {
   id: string
   namespace: string
-  labels: NonNullable<PartialMeshExternalService['labels']>
   config: PartialMeshExternalService
+
+  labels: NonNullable<PartialMeshExternalService['labels']>
   status: {
-    addresses: NonNullable<PartialMeshExternalService['status']['addresses']>
-    vip?: PartialMeshExternalService['status']['vip']
-  }
-}
+    addresses: NonNullable<NonNullable<PartialMeshExternalService['status']>['addresses']>
+  } & Omit<NonNullable<PartialMeshExternalService['status']>, 'addresses'>
+} & Omit<PartialMeshExternalService, 'labels' | 'status'>
 
 export type ServiceInsight = PartialServiceInsight & {
   serviceType: 'internal' | 'external' | 'gateway_builtin' | 'gateway_delegated'
@@ -97,7 +111,7 @@ export const MeshService = {
       })(item.spec),
       status: ((item = {}) => {
         return {
-          tls: typeof item.tls !== 'undefined' ? item.tls : { status: '' },
+          tls: typeof item.tls !== 'undefined' ? item.tls : { status: 'NotReady' },
           vips: Array.isArray(item.vips) ? item.vips : [],
           addresses: Array.isArray(item.addresses) ? item.addresses : [],
         }
@@ -105,7 +119,7 @@ export const MeshService = {
     }
   },
 
-  fromCollection(collection: PaginatedApiListResponse<PartialMeshService>): PaginatedApiListResponse<MeshService> {
+  fromCollection(collection: PartialMeshServiceList): PagedCollection<MeshService> {
     const items = Array.isArray(collection.items) ? collection.items.map(MeshService.fromObject) : []
     return {
       ...collection,
@@ -136,7 +150,7 @@ export const MeshExternalService = {
     }
   },
 
-  fromCollection(collection: PaginatedApiListResponse<PartialMeshExternalService>): PaginatedApiListResponse<MeshExternalService> {
+  fromCollection(collection: PartialMeshExternalServiceList): PagedCollection<MeshExternalService> {
     const items = Array.isArray(collection.items) ? collection.items.map(MeshExternalService.fromObject) : []
     return {
       ...collection,
