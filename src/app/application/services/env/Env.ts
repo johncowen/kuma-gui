@@ -1,4 +1,4 @@
-export type PathConfig = {
+export type KumaHtmlVars = {
   baseGuiPath: string
   apiUrl: string
   version: string
@@ -64,7 +64,7 @@ export default class Env {
    * tag that’s populated during server-side rendering of the Vue application’s
    * index.html file.
    */
-  protected getConfig(): PathConfig {
+  protected getConfig(): KumaHtmlVars {
     const pathConfigNode = document.querySelector('#kuma-config')
     if (pathConfigNode instanceof HTMLScriptElement && pathConfigNode.textContent) {
       const config = JSON.parse(pathConfigNode.textContent.trim())
