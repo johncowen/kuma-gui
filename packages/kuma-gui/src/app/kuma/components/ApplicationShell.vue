@@ -16,13 +16,7 @@
             <slot name="home" />
           </XAction>
 
-          <GithubButton
-            class="gh-star"
-            href="https://github.com/kumahq/kuma"
-            aria-label="Star kumahq/kuma on GitHub"
-          >
-            Star
-          </GithubButton>
+          <KumaSocial />
 
           <div class="upgrade-check-wrapper">
             <DataSource
@@ -169,8 +163,7 @@
   </div>
 </template>
 <script lang="ts" setup>
-import GithubButton from 'vue-github-button'
-
+import KumaSocial from './kuma-social/KumaSocial.vue'
 import { useEnv, useI18n, useCan } from '@/app/application'
 
 const slots = defineSlots()
@@ -178,7 +171,6 @@ const slots = defineSlots()
 const env = useEnv()
 const can = useCan()
 const { t } = useI18n()
-
 </script>
 <style lang="scss">
 html.is-fullscreen {
@@ -200,6 +192,7 @@ html.no-navigation {
 </style>
 
 <style lang="scss" scoped>
+
 .app-content-container {
   padding-top: var(--AppHeaderHeight, initial);
   display: var(--AppDisplay);
