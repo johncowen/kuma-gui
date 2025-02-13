@@ -43,7 +43,29 @@ lint/gherkin:
 
 .PHONY: lint/lock
 lint/lock:
-	@npx lockfile-lint \
-		--path package-lock.json \
-		--allowed-hosts npm \
-		--validate-https
+	@cd $(NPM_WORKSPACE_ROOT) ; \
+		npx lockfile-lint \
+			--path package-lock.json \
+			--allowed-hosts npm \
+			--validate-https \
+		&& npx license-checker-rseidelsohn \
+				--summary \
+				--excludePrivatePackages \
+				--excludePackagesStartingWith '$(shell cat package.json | jq -rj '"@" + .["license-checker"].allowOrgs.[] + "/;"' | rev | cut -c2- | rev)' \
+				--excludePackages 'new-date@1.0.3;tosource@2.0.0-alpha.3;' \
+				--onlyAllow '\
+					Python-2.0;\
+					Apache*;\
+					Apache-2.0;\
+					BlueOak-1.0.0;\
+					BSD;\
+					BSD-3-Clause;\
+					CC-BY-3.0;\
+					CC-BY-4.0;\
+					CC0-1.0;\
+					ISC;\
+					MIT;\
+					MPL-2.0;\
+					Unlicense;\
+					WTFPL;\
+			'
