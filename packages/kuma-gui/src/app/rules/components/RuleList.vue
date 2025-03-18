@@ -109,7 +109,7 @@
 </template>
 
 <script lang="ts" setup>
-import { type InboundRule } from '../data/InboundRule'
+import type { InboundRule } from '../data/InboundRule'
 import { useI18n, YAML } from '@/app/application'
 import AppCollection from '@/app/application/components/app-collection/AppCollection.vue'
 import AccordionItem from '@/app/common/AccordionItem.vue'

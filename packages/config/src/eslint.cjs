@@ -326,6 +326,8 @@ function createEslintConfig(
         // Avoids false errors like “'NodeListOf' is not defined”.
         'no-undef': 'off',
 
+        '@typescript-eslint/no-import-type-side-effects': 'error',
+
         'no-unused-vars': 'off',
         '@typescript-eslint/no-unused-vars': ['error', {
           argsIgnorePattern: '^_',
