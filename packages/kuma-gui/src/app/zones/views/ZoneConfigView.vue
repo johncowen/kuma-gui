@@ -44,7 +44,7 @@
           :key="key"
         >
           <XNotification
-            :notify="bool"
+            v-if="bool"
             :data-testid="`warning-${key}`"
             :uri="`zone-cps.notifications.${key}.${props.data.id}`"
           >

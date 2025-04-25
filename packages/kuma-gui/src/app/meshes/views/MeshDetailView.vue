@@ -22,7 +22,7 @@
         :notifications="true"
       >
         <XNotification
-          :notify="!props.mesh.mtlsBackend"
+          v-if="!props.mesh.mtlsBackend"
           :uri="`meshes.notifications.mtls-warning:${props.mesh.id}`"
         >
           <XI18n
@@ -46,7 +46,7 @@
                 :key="typeof stats"
               >
                 <XNotification
-                  :notify="policy === 'MeshTrafficPermission' && props.mesh.mtlsBackend && stats.total === 0"
+                  v-if="policy === 'MeshTrafficPermission' && props.mesh.mtlsBackend && stats.total === 0"
                   :uri="`meshes.notifications.mtp-warning:${props.mesh.id}`"
                 >
                   <XI18n
