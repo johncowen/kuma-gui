@@ -28,7 +28,7 @@ lint: .lint/js ## Dev: Run lint checks
 ## repository to regenerate the specs before running `make build`
 .PHONY: build
 build: GIT_SHA?=$(shell $(MAKE) version)
-build: kuma/docs/generated/openapi.yaml ## Regenerate the TS types from kumahq/kuma OpenAPI specs whilst applying overlays in ./src
+build: kuma/docs/generated/openapi.yaml ## Regenerate the TS types from kumahq/kuma OpenAPI specs whilst applying overlays in ./src. Use `GIT_SHA=` to build from a specific SHA
 	@echo "Rebuilding types for kumahq/kuma@$(GIT_SHA)"
 	@$(MAKE) \
 		-f ../config/src/mk/openapi.mk \

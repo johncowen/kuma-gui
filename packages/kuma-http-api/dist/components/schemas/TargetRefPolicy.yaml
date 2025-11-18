@@ -21,6 +21,12 @@ properties:
     type: object
     additionalProperties:
       type: string
+  spec:
+    description: Spec is the specification of the Kuma MeshAccessLog resource.
+    type: object
+    properties:
+      targetRef:
+        $ref: "./MeshAccessLogItem.yaml#/properties/spec/properties/targetRef"
   creationTime:
     description: Time at which the resource was created
     type: string
@@ -33,11 +39,6 @@ properties:
     format: date-time
     example: '0001-01-01T00:00:00Z'
     readOnly: true
-  spec:
-    description: Spec is the specification of the Kuma Policy resource.
-    properties:
-      targetRef:
-        $ref: "./MeshAccessLogItem.yaml#/properties/spec/properties/targetRef"
 content:
   application/json:
     schema:

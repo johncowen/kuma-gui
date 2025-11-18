@@ -26,3 +26,16 @@ actions:
       /mesh-insights/{name}:
         $ref: "paths/mesh-insights_{name}.yaml"
 
+  # RequestBody
+  - target: '$.components.schemas'
+    update:
+      MeshAccessLogItem_Put_RequestBody:
+        $ref: "components/schemas/MeshAccessLogItem_Put_RequestBody.yaml"
+  - target: "$.paths['/meshes/{mesh}/meshaccesslogs/{name}']"
+    update:
+      put:
+        requestBody:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MeshAccessLogItem_Put_RequestBody'

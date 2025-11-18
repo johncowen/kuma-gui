@@ -1,0 +1,66 @@
+overlay: 1.0.0
+info:
+  title: Customise MeshAccessLog
+  version: 0.1.0
+extends: ../../../generated/components/schemas/MeshAccessLogItem.yaml
+actions:
+  # Easier debug
+  # - target: '$.properties.spec.properties.from'
+  #   remove: true
+  # - target: '$.properties.spec.properties.rules'
+  #   remove: true
+  #
+
+  # don't allow other properties
+  - target: '$.properties'
+    update:
+      additionalProperties: false
+
+  # don't allow certain labels
+  - target: '$.properties.labels'
+    update:
+      propertyNames:
+        allOf:
+          - not:
+              enum:
+                - kuma.io/zone
+                - kuma.io/env
+                - kuma.io/mesh
+                - kuma.io/display-name
+                - kuma.io/origin
+                - kuma.io/policy-role
+                - kuma.io/proxy-type
+          - not:
+              pattern: '^k8s\.kuma\.io/'
+
+  # correct top-level targetRef
+  - target: '$.properties.spec.properties.targetRef.properties.kind.enum'
+    remove: true
+  - target: '$.properties.spec.properties.targetRef.properties.name'
+    remove: true
+  - target: '$.properties.spec.properties.targetRef.properties.kind'
+    update:
+      enum:
+        - Mesh
+        - Dataplane
+
+  # readOnly properties you are shouldn't set whilst editing
+  - target: '$.properties.mesh'
+    update:
+      readOnly: true
+  - target: '$.properties.name'
+    update:
+      readOnly: true
+  - target: '$.properties.type'
+    update:
+      readOnly: true
+
+  # delete readOnly properties completely
+  - target: '$.properties.creationTime'
+    remove: true
+  - target: '$.properties.modificationTime'
+    remove: true
+  - target: '$.properties.kri'
+    remove: true
+
+

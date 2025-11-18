@@ -32,6 +32,12 @@ paths:
     $ref: 'paths/meshes_{mesh}_{serviceType}_{serviceName}__hostnames.yaml'
   '/meshes/{mesh}/meshaccesslogs/{name}':
     $ref: 'paths/meshes_{mesh}_meshaccesslogs_{name}.yaml'
+    put:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MeshAccessLogItem_Put_RequestBody'
   '/meshes/{mesh}/meshaccesslogs':
     $ref: 'paths/meshes_{mesh}_meshaccesslogs.yaml'
   '/meshes/{mesh}/meshcircuitbreakers/{name}':
@@ -352,6 +358,8 @@ components:
       $ref: "components/schemas/LegacyPolicy.yaml"
     TargetRefPolicy:
       $ref: "components/schemas/TargetRefPolicy.yaml"
+    MeshAccessLogItem_Put_RequestBody:
+      $ref: "components/schemas/MeshAccessLogItem_Put_RequestBody.yaml"
   examples:
     GlobalInsightExample:
       $ref: "components/examples/GlobalInsightExample.yaml"
