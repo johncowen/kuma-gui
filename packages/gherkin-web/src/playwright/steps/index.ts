@@ -97,41 +97,54 @@ export async function setupSteps<TMock extends BaseMock>({ dependencies, fs, moc
         url: `${config.KUMA_BASE_URL}`,
       },
     ])
+    const p = Object.keys(fs).map(route => {
+      return context.route(
+        (u) => {
+          // if(u.pathname.includes('mesh/control-planes')) {
+          //   console.log(u.toString(), routeToRegexp(route))
+          // }
+          return routeToRegexp(route).test(u.toString())
+        },
+        async (route, request) => {
+          const url = request.url()
+          // console.log(url)
+          try {
+            const cookies = await context.cookies()
+            const response = await fetch(url, {
+              method: request.method(),
+              headers: {
+                cookie: cookies.map((c) => `${c.name}=${c.value}`).join('; '),
+                ...request.headers()
+              },
+            })
+            if (env.KUMA_LATENCY) {
+              await new Promise((resolve) => setTimeout(resolve, parseInt(env.KUMA_LATENCY)))
+            }
+            // console.log(url, request.postDataJSON())
+            client.request({
+              url: new URL(url),
+              request: {
+                method: request.method(),
+                // TODO: this could be wrong
+                body: request.postDataJSON() ?? {},
+              },
+            })
+            const type = response.headers.get('Content-Type') ?? 'application/json'
+            const body = type.endsWith('/json') ? JSON.stringify((await response.json()), null, 4) : (await response.text())
+            await route.fulfill({
+              status: parseInt(response.headers.get('Status-Code') ?? '200'),
+              contentType: type,
+              body,
+            })
+          } catch (e) {
+            console.error(e)
+            await route.continue()
+          }
+        })
 
-    await context.route('**', async (route, request) => {
-      const url = request.url()
-      try {
-        const cookies = await context.cookies()
-        const response = await fetch(url, {
-          method: request.method(),
-          headers: {
-            cookie: cookies.map((c) => `${c.name}=${c.value}`).join('; '),
-            ...request.headers()
-          },
-        })
-        if (env.KUMA_LATENCY) {
-          await new Promise((resolve) => setTimeout(resolve, parseInt(env.KUMA_LATENCY)))
-        }
-        client.request({
-          url: new URL(url),
-          request: {
-            method: request.method(),
-            // TODO: this could be wrong
-            body: request.postDataJSON(),
-          },
-        })
-        const type = response.headers.get('Content-Type') ?? 'application/json'
-        const body = type.endsWith('/json') ? JSON.stringify((await response.json()), null, 4) : (await response.text())
-        await route.fulfill({
-          status: parseInt(response.headers.get('Status-Code') ?? '200'),
-          contentType: type,
-          body,
-        })
-      } catch (e) {
-        // console.error(e)
-        await route.continue()
-      }
     })
+    await Promise.all(p)
+
   })
   After(async ({ page }) => {
     await page.evaluate(() => localStorage.clear())
@@ -186,12 +199,13 @@ export async function setupSteps<TMock extends BaseMock>({ dependencies, fs, moc
               ...request.headers()
             },
           })
+            // console.log(url, request.postDataJSON())
           client.request({
             url: new URL(url),
             request: {
               method: request.method(),
               // TODO: this could be wrong
-              body: request.postDataJSON(),
+              body: request.postDataJSON() ?? {},
             },
           })
           const type = response.headers.get('Content-Type') ?? 'application/json'
@@ -200,7 +214,7 @@ export async function setupSteps<TMock extends BaseMock>({ dependencies, fs, moc
             headers?: Record<string, string>
             body?: Record<string, unknown>
           }
-          if(type.endsWith('/json')) {
+          if (type.endsWith('/json')) {
             // TODO: properly merge the headers
             merged = merge({ body: await response.json(), headers: {} }, _yaml) as any
             await route.fulfill({
@@ -234,7 +248,9 @@ export async function setupSteps<TMock extends BaseMock>({ dependencies, fs, moc
   When('I visit the {string} URL', async ({ page }, path: string) => {
     const url = `${config.KUMA_BASE_URL}${path}`
     await page.goto(url)
-    await page.locator('[data-testid-root="mesh-app"]').waitFor()
+    await page.locator('[data-testid-root="mesh-app"]').waitFor({
+      state: 'attached'
+    })
   })
 
   // When('I load the {string} URL', async ({ page }, path: string) => {
@@ -273,15 +289,17 @@ export async function setupSteps<TMock extends BaseMock>({ dependencies, fs, moc
   //
 
   When('I {string} {string} into the {string} element', async ({ page }, event: string, text: string, selector: string) => {
+    // console.log('================')
+    // console.log(selector)
     const $elem = page.locator($(selector))
     switch (event) {
       case 'input':
       case 'type':
         // TODO: make a "I press/hit enter" or similar step
-        if(text === '{enter}') {
+        if (text === '{enter}') {
           await $elem.press('Enter')
         } else {
-          await $elem.pressSequentially(text, { delay: 100 })
+          await $elem.pressSequentially(text, { delay: 50 })
         }
         break
     }
