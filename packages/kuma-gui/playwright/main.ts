@@ -1,28 +1,23 @@
 import { build, token } from '@kumahq/container'
 import { setupSteps } from '@kumahq/gherkin-web/playwright/browser'
 import env from '@kumahq/settings/env'
-import type { Env } from '@/app/application'
 
-import { services as application } from '@/app/application/debug'
 import { TOKENS as FAKE_FS, services as fakeFs } from '@/app/fake-fs'
-import { services as kuma, locales } from '@/app/kuma/debug'
+import { services as kuma } from '@/app/kuma/debug'
 
 (async () => {
   const $ = {
     mswHandlers: token('msw.handlers'),
     ...FAKE_FS,
-    env: token<typeof env>('cypress.env'),
-    vars: token('cypress.env.vars'),
+    env: token<typeof env>('playwright.env'),
+    vars: token('playwright.env.vars'),
   }
   const get = build(
     // mocks
     fakeFs($),
     kuma($),
-    locales($),
-    // application($),
-    //
     [
-      [token('cypress.env.vars'), {
+      [token('playwright.env.vars'), {
         service: () => {
           // these are only fed to the mocks
           return {
@@ -40,20 +35,7 @@ import { services as kuma, locales } from '@/app/kuma/debug'
           $.vars,
         ],
       }],
-      // [token('env.debug'), {
-      //   service: (getEnv: () => Env) => {
-      //     const env = getEnv()
-      //     return (...[ key, ...rest ]: Parameters<Env>) => {
-      //       // make sure you can't read/replace anything but PREFIX_*
-      //       return Cookie.parse(document.cookie ?? '', { prefix: `${prefix}_`})[key] ?? env(key, ...rest)
-      //     }
-      //   },
-      //   decorates: $.env,
-      // }],
     ],
-    // cypress
-    // e2e($),
-    //
   )
   setupSteps({
     dependencies: get($.dependencies),
