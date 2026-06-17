@@ -187,7 +187,7 @@ const props = defineProps<{
 
 .policy-type-table :deep(td > *) {
   white-space: normal;
-  word-break: break-word;
+  word-break: word-break;
 }
 
 .matcher__not {

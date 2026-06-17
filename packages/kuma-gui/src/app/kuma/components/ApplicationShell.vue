@@ -211,7 +211,6 @@ header {
 
 nav {
   position: fixed;
-  padding: 0;
   width: var(--AppSidebarWidth);
   z-index: 10;
   top: var(--AppHeaderHeight);

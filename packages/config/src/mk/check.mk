@@ -56,7 +56,7 @@ check/node:
 .lint/css:
 	@$(STYLELINT) \
 		$(if $(CI),,--fix) --allow-empty-input \
-		./src/**/*.{css,scss,vue}
+		./**/*.{css,scss,vue}
 
 .PHONY: lint/gherkin
 .lint/gherkin: GHERKIN_UTILS ?= $(shell $(MAKE) resolve/bin PACKAGE=@cucumber/gherkin-utils BIN=gherkin-utils)

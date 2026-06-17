@@ -381,8 +381,8 @@ header {
   }
 }
 
-.listener-list>*+*,
-.to-rule-list>*+* {
+.listener-list > * + *,
+.to-rule-list > * + * {
   margin-top: var(--x-space-60);
 }
 
@@ -430,7 +430,7 @@ header {
   flex-direction: column;
 }
 
-.definition-list>* {
+.definition-list > * {
   min-width: 0;
 }
 

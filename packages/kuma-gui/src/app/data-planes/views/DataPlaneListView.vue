@@ -365,7 +365,8 @@ search {
 
 .search-field {
   flex-basis: 310px;
-  flex: 1;
+  flex-grow: 1;
+  flex-shrink: 1;
 }
 
 .name-link {
