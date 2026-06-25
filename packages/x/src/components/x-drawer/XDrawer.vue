@@ -1,25 +1,36 @@
 <template>
-  <KSlideout
-    ref="slideOutRef"
-    class="summary-slideout"
-    :close-on-blur="false"
-    :has-overlay="false"
-    visible
-    :max-width="props.width"
-    offset-top="var(--x-drawer-offset-top, 0)"
-    data-testid="summary"
-    @close="emit('close')"
+  <XTeleportTemplate
+    :to="{ name: 'drawer-layer'}"
   >
-    <template #title>
-      <XTeleportSlot :name="id" />
-    </template>
-    <slot />
-  </KSlideout>
+    <XWindow
+      :resize="true"
+      v-slot="{ resize }"
+    >
+      <KSlideout
+        id="mine"
+        ref="slideOutRef"
+        class="summary-slideout"
+        :close-on-blur="false"
+        :has-overlay="false"
+        visible
+        :max-width="props.width"
+        data-testid="summary"
+        @close="emit('close')"
+        v-style="`--x-drawer-height: ${resize?.target?.innerHeight ?? 0}px`"
+      >
+        <template #title>
+          {{ $el?.getBoundingClientRect().top }}
+          <XTeleportSlot :name="id" />
+        </template>
+        <slot />
+      </KSlideout>
+    </XWindow>
+  </XTeleportTemplate>
 </template>
 
 <script lang="ts" setup>
-import { onClickOutside, useThrottleFn } from '@vueuse/core'
-import { ref, provide, useId } from 'vue'
+import { onClickOutside, useThrottleFn, useResizeObserver } from '@vueuse/core'
+import { ref, provide, useId, onMounted, nextTick } from 'vue'
 
 const id = useId()
 provide('app-summary-view', id)
@@ -45,6 +56,17 @@ const props = withDefaults(defineProps<{
 const emit = defineEmits<{
   (event: 'close'): void
 }>()
+const $el = ref<HTMLElement | null>(null)
+
+onMounted(async () => {
+  await nextTick()
+  useResizeObserver(document.querySelector('.app-sidebar > nav'), (entries) => {
+    const entry = entries[0]
+    const { width, height } = entry.contentRect
+    console.log(`width: ${width}, height: ${height}`)
+  })
+})
+
 </script>
 <style lang="scss" scoped>
 .summary-slideout {
@@ -67,6 +89,9 @@ const emit = defineEmits<{
   }
 }
 :deep(.slideout-container) {
+  top: unset !important;
   z-index: auto !important;
+  padding-bottom: 80px;
+  height: calc(var(--x-drawer-height));
 }
 </style>

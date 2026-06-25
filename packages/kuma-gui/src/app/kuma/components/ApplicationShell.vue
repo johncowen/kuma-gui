@@ -5,6 +5,7 @@
     <XTeleportSlot
       name="modal-layer"
     />
+
     <header
       role="banner"
     >
@@ -138,10 +139,14 @@
           </ul>
         </nav>
       </div>
-      <main
-        class="app-main-content"
-      >
+      <main>
+        <div v-style="`position: absolute; z-index: 1;`">
+          <XTeleportSlot
+            name="drawer-layer"
+          />
+        </div>
         <XLayout
+          class="app-main-content"
           variant="y-stack"
         >
           <div>
@@ -189,9 +194,11 @@ onMounted(() => {
   grid-template-columns: var(--AppSidebarWidth) minmax(0, 1fr);
 }
 
+main {
+  min-height: 100vh;
+}
 .app-main-content {
   padding: var(--AppContentPadding);
-  min-height: calc(100vh - var(--AppHeaderHeight));
 }
 
 header {
