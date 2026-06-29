@@ -17,7 +17,8 @@ const protocolHandler = (can: Can) => {
     const kriProto = 'kri://'
     switch (true) {
       case href.startsWith(kriProto): {
-        const { mesh, name: encodedName, zone, namespace, shortName } = Kri.fromString(href.substring(kriProto.length))
+        const kri = href.substring(kriProto.length)
+        const { mesh, name: encodedName, zone, namespace, shortName } = Kri.fromString(kri)
         // old style names can have _ in them that are replaced with `~`
         const name = encodedName.replaceAll('~', '_')
         const id = `${name}${namespace !== '' ? `.${namespace}`: '' }`
@@ -31,6 +32,9 @@ const protocolHandler = (can: Can) => {
                 },
               }
             case shortName === 'z':
+              // zones won't link if they aren't enabled
+              // i.e. we return ``
+              // but we need to make sure we don't default to the generic resource page
               if(can('use zones')) {
                 return {
                   name: 'zone-cp-detail-view',
@@ -38,8 +42,9 @@ const protocolHandler = (can: Can) => {
                     zone: name,
                   },
                 }
+              } else {
+                return ''
               }
-              break
             case shortName === 'wl':
               return {
                 name: 'workload-detail-view',
@@ -79,7 +84,12 @@ const protocolHandler = (can: Can) => {
                 },
               }
             default:
-              return
+              return {
+                name: 'resource-detail-view',
+                params: {
+                  kri,
+                },
+              }
           }
         })()
         if (to) {

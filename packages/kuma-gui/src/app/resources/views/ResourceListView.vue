@@ -174,12 +174,7 @@
                     <template #actions="{ row }">
                       <XActionGroup>
                         <XAction
-                          :to="{
-                            name: 'resource-detail-view',
-                            params: {
-                              kri: row.kri,
-                            },
-                          }"
+                          :href="`kri://${row.kri}`"
                         >
                           {{ t('common.collection.actions.view') }}
                         </XAction>
