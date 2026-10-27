@@ -14,7 +14,6 @@ $(NPM_WORKSPACE_ROOT)/node_modules: $(if $(CI),,$(NPM_WORKSPACE_ROOT)/package-lo
 		&& npm $(if $(CI),clean-install,install) \
 					--ignore-scripts \
 					--allow-git none \
-					--min-release-age 12 \
 		&& touch $(NPM_WORKSPACE_ROOT)/node_modules
 #
 .PHONY: .sync
@@ -24,8 +23,7 @@ $(NPM_WORKSPACE_ROOT)/node_modules: $(if $(CI),,$(NPM_WORKSPACE_ROOT)/package-lo
 					--package-lock-only \
 					--prefer-dedupe \
 					--ignore-scripts \
-					--allow-git none \
-					--min-release-age 12
+					--allow-git none
 
 .PHONY: .clean
 .clean:
